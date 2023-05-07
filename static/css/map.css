@@ -1,0 +1,87 @@
+
+  .button-pop {
+            border-style: solid;
+            border-width: 1px;
+            font-size: 12px;
+            line-height: 6px;
+            padding-left: 18px;
+            padding-right: 18px;
+            text-align: center;
+            text-transform: uppercase;
+            background-color: #1b1b1b;
+            border-color: #1b1b1b;
+            color: #e5dfd9;
+            border-radius: 100px;
+            appearance: none;
+            font-weight: 400;
+            font-style: normal;
+            padding-bottom: 12px;
+            padding-top: 12px;
+
+        }
+.popup-container p, h1, h2, h3, h4, h5, h6 {
+            font-family: "Merriweather", serif;
+            letter-spacing: 1px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+
+        #map {
+            border-radius: 0.125em;
+            border: 2px solid #1978cf;
+
+            float: left;
+            width:70%;
+            height: 600px;
+            overflow: hidden;
+        }
+
+        #findbox {
+
+            border-radius: .125em;
+            margin-top: 50px;
+            margin-left: 100px;
+
+            margin-bottom: 10px;
+            padding: 2px 2px;
+            width: 300px;
+            height: 2.6em;
+        }
+
+        .leaflet-control-search .search-cancel {
+            position: static;
+            float: left;
+            margin-left: -22px;
+        }
+
+        .leaflet-control-search .search-input {
+
+            font-size: 1em;
+            width: 12em;
+            max-width: 100%;
+            border: 3px solid #666;
+            border-radius: 5px;
+            margin: auto;
+            position: relative;
+            padding: 3px 20px 3px 2px;
+            height: 20px;
+
+
+        }
+
+        .location-address {
+            font-family: "Arial", sans-serif;
+            font-weight: bold;
+            color: #716f6f;
+        }
+
+        .movie-container {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .movie-text {
+            margin-left: 10px;
+        }

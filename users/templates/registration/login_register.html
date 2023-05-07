@@ -1,0 +1,91 @@
+{% extends 'userbase.html' %}
+
+{% block content %}
+
+{% if email_sent %}
+  <div class="email-sent-message">
+    <p>A confirmation link has been sent to your email address. Please check your inbox and follow the instructions to confirm your email address.</p>
+  </div>
+{% endif %}
+
+
+
+
+  {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+<div class="cont">
+
+  <form method="post"  class="form sign-in" >
+    {% csrf_token %}
+    <h2>Welcome back,</h2>
+    <label>
+      <span>username</span>
+      <input type="text" name="email"  />
+    </label>
+    <label>
+      <span>Password</span>
+      <input type="password" name="password" required />
+    </label>
+    <p class="forgot-pass" >Forgot password?<a href="{% url "password_reset_recover" %}"> click here </a></p>
+    <button type="submit" name="sign_in" class="submit">Sign In</button>
+
+  </form>
+  <div class="sub-cont">
+    <div class="img">
+      <div class="img__text m--up">
+        <h2>New here?</h2>
+        <p>Sign up and discover great amount of new opportunities!</p>
+      </div>
+      <div class="img__text m--in">
+        <h2>One of us?</h2>
+        <p>If you already has an account, just sign in. We've missed you!</p>
+      </div>
+      <div class="img__btn">
+        <span class="m--up">Sign Up</span>
+        <span class="m--in">Sign In</span>
+      </div>
+    </div>
+    <form method="post"  class="form sign-up" action="{% url 'login_register' %}">
+      {% csrf_token %}
+      <h2>Time to feel like home,</h2>
+      <label>
+        <span>Name</span>
+        <input type="text" name="username"  />
+      </label>
+      <label>
+        <span>Email</span>
+        <input type="email" name="email" required />
+      </label>
+      <label>
+        <span>Set Password</span>
+        <input type="password" name="password" required />
+      </label>
+         <label>
+        <span>confirm Password</span>
+        <input type="password" name="password2" required />
+      </label>
+
+      <button type="submit" name="sign_up" class="submit">Sign Up</button>
+
+    </form>
+
+  </div>
+</div>
+<script>
+  document.querySelector('.img__btn').addEventListener('click', function() {
+    document.querySelector('.cont').classList.toggle('s--signup');
+  });
+
+  {% if show_register_form %}
+    document.querySelector('.img__btn').click();
+  {% endif %}
+</script>
+
+
+
+{% endblock %}

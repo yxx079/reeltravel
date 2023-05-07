@@ -1,0 +1,16 @@
+{% extends 'userbase.html' %}
+
+{% block content %}
+  {% url 'index' as index_url %}
+ <a href="{{ index_url }}" class="back-to-main">Back to homepage </a>
+Hello, {{ user.username|default:'Guest' }}!
+  <div>
+    {% if user.is_authenticated %}
+        <a href="{% url 'logout' %}">Logout</a>
+        <a href="{% url 'password_change' %}">Change password</a>
+    {% else %}
+        <a href="{% url 'login_register' %}">Login</a>
+
+    {% endif %}
+</div>
+{% endblock %}

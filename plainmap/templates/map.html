@@ -1,0 +1,278 @@
+{% extends 'mapbase.html' %}
+{% block content %}
+
+    <div class="crumbs">
+        <ul>
+            <li><a href="{% url 'index' %}">Home</a></li>
+            <li><a href="#">Search Map By Movie</a></li>
+        </ul>
+    </div>
+
+    <div id="findbox"></div>
+    <div id="map"></div>  <!-- optionally define the sidebar content via HTML markup -->
+    <!-- optionally define the sidebar content via HTML markup -->
+    <div id="sidebar" class="leaflet-sidebar collapsed">
+
+        <!-- nav tabs -->
+        <div class="leaflet-sidebar-tabs">
+            <!-- top aligned tabs -->
+            <ul role="tablist">
+                <li><a href="#visibleLocations" role="tab"><i class="fa fa-map-marker"></i></a></li> <!-- 添加这行 -->
+            </ul>
+
+            <!-- bottom aligned tabs -->
+            <ul role="tablist">
+                <li><a href="https://github.com/nickpeihl/leaflet-sidebar-v2"><i class="fa fa-github"></i></a></li>
+            </ul>
+        </div>
+
+        <!-- panel content -->
+        <div class="leaflet-sidebar-content">
+
+            <div class="leaflet-sidebar-pane" id="visibleLocations">
+                <h3 class="leaflet-sidebar-header">
+                    Visible Locations
+                    <span class="leaflet-sidebar-close"><i class="fa fa-caret-left"></i></span>
+                </h3>
+                <ul id="movie-locations-list"></ul>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        function getVisibleMarkers() {
+            var bounds = map.getBounds();
+            return markers.getLayers().filter(function (layer) {
+                return bounds.contains(layer.getLatLng());
+            });
+        }
+
+        function get_movie_data() {
+            $.getJSON('/get_movie_data/', function (data) {
+
+// 创建标记群组实例
+                var markers = L.markerClusterGroup();
+
+                // 添加电影位置标记
+                for (var i = 0; i < data.locations.length; i++) {
+                    var location = data.locations[i];
+
+                    // 查找电影信息
+                    var movies = [];
+                    for (var j = 0; j < data.movies.length; j++) {
+                        var movie = data.movies[j];
+                        if (movie.location_ids.includes(location.id)) {
+                            movies.push(movie);
+                        }
+                    }
+
+                    // 创建标记
+                    var marker = L.marker(
+                        location.coordinates.split(',').map(parseFloat),
+                        {
+                            icon: L.icon({
+                                iconUrl: 'https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/images/marker-icon.png',
+                                iconSize: [25, 41],
+                                iconAnchor: [12, 41],
+                                popupAnchor: [0, -35],
+                            }),
+                        }
+                    );
+
+// 添加地理要素属性到标记
+                    marker.feature = {
+                        properties: {
+                            name: location.name,
+                            address: location.address,
+                            movies: movies.map(movie => movie.title) // 新增这一行
+                        }
+                    };
+
+
+                    // 创建弹出窗口
+                    var popup_content = '<div class="popup-container"><p class="location-address" >' + 'address: ' + location.name + '</p>';
+                    for (var k = 0; k < movies.length; k++) {
+                        movie = movies[k];
+                        popup_content += '<div class="movie-container">';
+                        popup_content += '  <img src="' + movie.photo_urls[0] + '" width="150" alt="photo"/>';
+                        popup_content += '    <div class="movie-text">';
+                        popup_content += '  <h3>' + '< ' + movie.title + ' >' + '</h3>';
+                        popup_content += '  <p>' + movie.description + '</p>';
+                        popup_content += '    </div>';
+                        popup_content += '  </div>';
+
+                    }
+                    popup_content += '</div>';
+
+
+                    marker.bindPopup(popup_content);
+
+                    // 将标记添加到标记层组中
+                    markers.addLayer(marker);
+                }
+
+                // 添加标记层组到地图中
+                markers.addTo(map);
+                var searchControl = new L.Control.Search({
+                    container: 'findbox',
+                    layer: markers,
+                    propertyName: 'movies', // 将propertyName更改为'movies'
+                    marker: false,
+                    textPlaceholder: 'search for a movie ',
+                    textErr: 'Sorry, no results found.',
+                    searchMethod: function (inputText, records) { // 新增这个属性
+                        var found = [];
+                        for (var key in records) {
+                            var record = records[key];
+                            if (record.movies.some(movie => movie.toLowerCase().includes(inputText.toLowerCase()))) {
+                                found.push(key);
+                            }
+                        }
+                        return found;
+                    },
+                    moveToLocation: function (latlng, title, map) {
+                        map.setView([latlng.lat - 0.05, latlng.lng], 16);
+                        var markersToOpen = markers.getLayers().filter(function (layer) {
+                            return layer.feature.properties.movies.some(movie => movie.toLowerCase().includes(title.toLowerCase()));
+                        });
+                        // 获取边界
+                        var bounds = L.latLngBounds();
+                        markersToOpen.forEach(function (marker) {
+                            bounds.extend(marker.getLatLng());
+                            marker.openPopup();
+                        });
+
+                        // 自动调整缩放级别和中心点
+                        map.fitBounds(bounds);
+                    },
+                });
+                searchControl.on('search:locationfound', function (e) {
+                    var movieName = e.text;
+                    var markersToOpen = markers.getLayers().filter(function (layer) {
+                        return layer.feature.properties.movies.some(movie => movie.toLowerCase().includes(movieName.toLowerCase()));
+                    });
+                    // 获取边界
+                    var bounds = L.latLngBounds();
+                    markersToOpen.forEach(function (marker) {
+                        bounds.extend(marker.getLatLng());
+                        marker.openPopup();
+                    });
+
+                    // 自动调整缩放级别和中心点
+                    map.fitBounds(bounds);
+                });
+                map.addControl(searchControl);
+
+                function showVisibleMarkers() {
+                    // 清空 sidebar 内容
+                    var sidebarContent = document.getElementById('movie-locations-list');
+                    if (!sidebarContent) {
+                        sidebarContent = document.createElement('ul');
+                        sidebarContent.id = 'movie-locations-list';
+                        document.getElementById('sidebar').appendChild(sidebarContent);
+                    }
+                    sidebarContent.innerHTML = '';
+
+                    // 获取当前地图视图范围
+                    var bounds = map.getBounds();
+                    var southWest = bounds.getSouthWest();
+                    var northEast = bounds.getNorthEast();
+
+                    // 遍历标记层组中的标记
+                    markers.eachLayer(function (layer) {
+                        var latLng = layer.getLatLng();
+
+                        // 如果标记在当前视图范围内
+                        if (latLng.lat >= southWest.lat && latLng.lat <= northEast.lat &&
+                            latLng.lng >= southWest.lng && latLng.lng <= northEast.lng) {
+
+                            // 获取标记的属性
+                            var properties = layer.feature.properties;
+
+                            // 创建 sidebar 子元素
+                            var sidebarChild = document.createElement('li');
+                            sidebarChild.innerHTML = '<a>' + properties.name + '</a><ul>';
+                            for (var i = 0; i < properties.movies.length; i++) {
+
+                                sidebarChild.innerHTML += '<h2>' + properties.movies[i]+ '</h2>';
+                            }
+                            sidebarChild.innerHTML += '</ul>';
+
+                            // 添加 sidebar 子元素到 sidebar 内容中
+                            sidebarContent.appendChild(sidebarChild);
+                        }
+                    });
+                }
+
+                map.on('moveend', showVisibleMarkers);
+                showVisibleMarkers();
+
+            });
+
+
+        }
+
+
+        var map = L.map('map').setView([51.5074, -0.1278], 6);
+
+        // 添加底图
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors',
+            maxZoom: 19,
+        }).addTo(map);
+        // 创建 GPS 控件实例
+        var gps = new L.Control.Gps({
+            autoActive: false,
+            autoCenter: true,
+
+        });
+
+        // 将 GPS 控件添加到地图上
+        gps.addTo(map);
+
+        // 添加“定位成功”事件处理程序
+        map.on('gps:located', function (e) {
+            console.log('Located', e);
+        });
+
+        // 添加“定位失败”事件处理程序
+        map.on('gps:error', function (e) {
+            console.log('Error', e);
+        });
+
+        // 创建标记群组实例
+        var markers = L.markerClusterGroup();        // 添加标记到群组中
+
+
+        // 将标记群组添加到地图上
+        map.addLayer(markers);
+
+
+        // 在页面加载时加载地图
+        $(document).ready(get_movie_data);
+
+
+        // create the sidebar instance and add it to the map
+        var sidebar = L.control.sidebar({container: 'sidebar'})
+            .addTo(map)
+
+
+        // add panels dynamically to the sidebar
+
+
+        // be notified when a panel is opened
+        sidebar.on('content', function (ev) {
+            switch (ev.id) {
+                case 'autopan':
+                    sidebar.options.autopan = true;
+                    break;
+                default:
+                    sidebar.options.autopan = false;
+            }
+        });
+
+
+    </script>
+
+{% endblock %}

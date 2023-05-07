@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+#container{
+
+    height: 300px;
+}
+</style>
+     <div class="crumbs">
+        <ul>
+            <li><a href="{% url 'index' %}">Home</a></li>
+            <li><a href="#">Search </a></li>
+        </ul>
+    </div>
+<section id="container">
+			<div class="wrap-container">
+    <p>Welcome to movie search</p>
+    <form method=POST action="{% url 'searchmovies' %}">
+        {% csrf_token %}
+        <input type="search" placeholder="Search For Movies" aria-label="wordtosearch" name="wordtosearch">
+        <button type="submit">Search</button>
+    </form>
+            </div>
+</section>
+ {% endblock %}

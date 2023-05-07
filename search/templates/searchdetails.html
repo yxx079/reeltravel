@@ -1,0 +1,181 @@
+{% extends "basesearch.html" %}
+{% load custom_tags %}
+{% block title %}{{movie.title}}- Details{% endblock %}
+{% block head %}
+<style>
+    body{
+        text-align: center;
+        background-color: white;
+        color: black;
+        font-size: 16px;
+        font-family: "Segoe UI", serif;
+    }
+
+    .darktheme{
+        text-align: center;
+        background-color: #19037a;
+        color: white;
+    }
+
+    #intro1{
+        width: 8%;
+    }
+
+    .largefont{
+        font-size: 24px;
+    }
+
+    .firstdiv1{
+        width: 18%;
+        display: inline-block;
+    }
+
+    .firstdiv2{
+        width: 13%;
+        display: inline-block;
+    }
+
+    .bar{
+        width: 19%;
+        float: right;
+    }
+
+    .firstdiv3{
+        display: inline-block;
+        width: 8%;
+    }
+
+    #imagesee{
+        float: right;
+    }
+
+    .movieinfo{
+        border-style: solid;
+        border-left-color: white;
+        border-right-color: white;
+        border-top-color: #ee00ff;
+        border-bottom-color: #ee00ff;
+        width: 80%;
+        float: left;
+    }
+
+    .movieinfodark{
+        border-color: #ee00ff;
+    }
+
+    .maindev{
+        display: flex;
+    }
+
+    .pleft{
+        float: left;
+        text-align: left;
+        width: 80%;
+    }
+
+    #pleft2{
+        float: left;
+        
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+
+
+<form method="get">
+    <input type="text" name="q" placeholder="Search specific movies" value="{{ request.GET.q }}">
+    <button type="submit">Search</button>
+</form>
+
+{% if movie %}
+<div class="maindiv">
+    <h2>{{movie.title}}</h2>
+
+    <div class="movieinfo">
+        <div class="pleft">
+            <h2>Introduction</h2>
+            <p>{{movie.description}}</p>
+            <h2>Release date</h2>
+            <p>{{movie.release_date}}</p>
+            <h2>Movie Genres</h2>
+            <div>
+                {% for genre in movie.genres.all %}
+                    {{ genre.name }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </div>
+            <h2>Actors</h2>
+            <div>
+                {% for actor in movie.actors.all %}
+                    {{ actor.name }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+                 and more
+            </div>
+            <h2>Directors</h2>
+            <div>
+                {% for director in movie.director.all %}
+                    {{ director.name }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </div>
+            <h2>Known filming locations</h2>
+            <div>
+                {% for location in movie.locations.all %} <!--temporary change locations to location (reverted)-->
+                    <h3>{{ location.name }}</h3>
+                    {% for photo in location.locationphoto_set.all %}
+                        <img src="{{ photo.image.url }}" alt="Location Photo" width="200">
+                    {% endfor %}
+                {% endfor %}
+            </div>
+            <h2>Current reviews</h2>
+            {% if reviews %}
+                {% for review in reviews %}
+                <div>
+                    <h3>{{ review.user.username }}, {{ review.rating }}</h3>
+                    <p>{{ review.text }}</p>
+                    {% for photo in review_photos|get_item:review.id %}
+                        <!--| get_item:review.id -->
+                        <img src="{{ photo.image.url }}" alt="Review Photo" width="100">
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>
+                    currently no reviews available for this movie.
+                </p>
+            {% endif %}
+            
+        </div>
+        {% for photo in movie.moviephoto_set.all %}
+            <img src="{{ photo.image.url }}" alt="Movie Photo" width="200" id="imagesee">
+        {% endfor %}
+        
+    </div>
+</div>
+{% else %}
+    <p>Unfortunately, No movie found related to the search term.</p>
+{% endif %}
+
+<div class="bar">
+    <div class="firstdiv2"><button id="darklight" onclick="adjustlight()">Light/Dark</button></div>
+    <br>
+    <div class="firstdiv3"><button id="fontlarge" onclick="adjustfont()">a/A</button></div>
+</div>
+
+</div>
+
+
+
+<script>
+    function adjustlight(){
+        var element= document.body;
+        element.classList.toggle("darktheme");
+    }
+
+    function adjustfont(){
+        var element=document.body;
+        element.classList.toggle("largefont");
+    }
+</script>
+
+{% endblock %}

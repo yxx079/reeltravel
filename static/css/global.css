@@ -1,0 +1,23 @@
+body {
+  margin: 0;
+  line-height: normal;
+}
+
+:root {
+  /* fonts */
+  --font-abel: Abel;
+  --font-graduate: Graduate;
+  --text1: Monda;
+  --font-montserrat: Montserrat;
+
+  /* font sizes */
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --text1-size: 16px;
+  --font-size-2xs: 11px;
+
+  /* Colors */
+  --color-darkgray: #949799;
+  --color-black: #000;
+  --color-white: #fff;
+}

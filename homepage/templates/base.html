@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title> Reel Travels</title>
+
+   <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/zerogrid.css' %}">
+  <link rel="stylesheet" href="{% static 'css/menu.css' %}">
+  <link rel="stylesheet" href="{% static 'owl-carousel/owl.carousel.css' %}">
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+  <script src="{% static 'js/script.js' %}"></script>
+
+         <link rel="stylesheet" href="{% static 'css/acc.css' %}">
+  <script src="{% static 'js/acc.js' %}" defer></script>
+</head>
+<body>
+    {% include 'header.html' %}
+        <div class="sidebar">
+  <button id="increase-font" title="Increase font size">+</button>
+  <button id="decrease-font" title="Decrease font size">-</button>
+  <button id="gray-scale" title="Enable grayscale">&#9898;</button>
+  <button id="high-contrast" title="Enable high contrast">&#9680;</button>
+  <button id="invert-colors" title="Enable negative contrast">&#9681;</button>
+  <button id="light-background" title="Enable light background">&#9728;</button>
+  <button id="link-underline" title="Underline links">U</button>
+  <button id="readable-font" title="Enable light background">Aa</button>
+  <button id="reset" title="Reset features">&#x21bb;</button>
+            <button class="accessibility-btn">👤</button>
+</div>
+    {% block content %}
+
+    {% endblock %}
+    {% include 'footer.html' %}
+</body>
+</html>

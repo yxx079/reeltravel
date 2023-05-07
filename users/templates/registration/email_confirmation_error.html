@@ -1,0 +1,9 @@
+{% extends 'userbase.html' %}
+
+{% block content %}
+  <div class="container">
+    <h2>Email Confirmation Error</h2>
+    <p>Oops! The confirmation link you clicked is invalid. It may have expired or already been used.</p>
+    <p><a href="{% url 'login_register' %}">Return to the login/register page</a>.</p>
+  </div>
+{% endblock %}

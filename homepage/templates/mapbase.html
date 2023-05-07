@@ -1,0 +1,182 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Movie Map</title>
+
+   <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+     <link rel="stylesheet" href="{% static 'css/zerogrid.css' %}">
+  <link rel="stylesheet" href="{% static 'css/menu.css' %}">
+  <link rel="stylesheet" href="{% static 'css/map.css' %}">
+
+  <link rel="stylesheet" href="{% static 'owl-carousel/owl.carousel.css' %}">
+
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+
+         <link rel="stylesheet" href="{% static 'css/acc.css' %}">
+  <script src="{% static 'js/acc.js' %}" ></script>
+  <script src="{% static 'js/script.js' %}"></script>
+
+
+        <script src="https://unpkg.com/jquery@3.3.1/dist/jquery.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script
+            src="https://cdn.jsdelivr.net/npm/leaflet-control-geocoder/dist/Control.Geocoder.min.js"
+    ></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-search@2.3.6/dist/leaflet-search.min.css"/>
+    <script src="https://unpkg.com/leaflet-search@2.3.6/dist/leaflet-search.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-gps/dist/leaflet-gps.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-gps/dist/leaflet-gps.min.css">
+    {#    聚合标记#}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.1/MarkerCluster.css"/>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.1/MarkerCluster.Default.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.1/leaflet.markercluster.js"></script>
+
+ <link rel="stylesheet" href="{% static 'css/leaflet-sidebar.css' %}">
+  <script src="{% static 'js/leaflet-sidebar.js' %}"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="icon" type="image/png" href="//cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.2.3/images/spritesheet-2x.png">
+<link rel="icon" type="image/png" href="//cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.2.3/images/spritesheet.png">
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.2.3/leaflet.draw.js"></script>
+
+<link rel="stylesheet" type="text/css" href="{% static 'css/ControlMiniMap/Control.MiniMap.css' %}" />
+
+<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.2.3/leaflet.draw.css">
+
+<script type="text/javascript" src="{% static 'js/leaflet-layerjson.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/Leaflet.Sync/L.Map.Sync.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/map_api.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'js/leaflet.hash/leaflet-hash.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/ControlMiniMap/Control.MiniMap.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jquery.simplyCountable.js' %}"></script>
+
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.js"></script>
+
+
+<style>
+ .popup-container p, h1, h2, h3, h4, h5, h6 {
+            font-family: "Merriweather", serif;
+            letter-spacing: 1px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        #map {
+            border-radius: 0.125em;
+            border: 2px solid #1978cf;
+
+            float: left;
+            width: 100%;
+            max-width: 1200px;
+            height: 600px;
+            overflow: hidden;
+        }
+
+        #findbox {
+
+            border-radius: .125em;
+            margin-top: 50px;
+            margin-left: 100px;
+
+            margin-bottom: 10px;
+            padding: 2px 2px;
+            width: 300px;
+            height: 2.6em;
+        }
+
+        .leaflet-control-search .search-cancel {
+            position: static;
+            float: left;
+            margin-left: -22px;
+        }
+
+        .leaflet-control-search .search-input {
+
+            font-size: 1em;
+            width: 12em;
+            max-width: 100%;
+            border: 2.5px solid #666;
+            border-radius: 5px;
+            margin: auto;
+            position: relative;
+            padding: 3px 20px 3px 2px;
+            height: 20px;
+
+
+        }
+
+        .location-address {
+            font-family: "Arial", sans-serif;
+            font-weight: bold;
+            color: #716f6f;
+        }
+
+        .movie-container {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .movie-text {
+            margin-left: 10px;
+        }
+</style>
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</head>
+<body>
+    {% include 'header.html' %}
+        <div class="sidebar">
+  <button id="increase-font" title="Increase font size">+</button>
+  <button id="decrease-font" title="Decrease font size">-</button>
+  <button id="gray-scale" title="Enable grayscale">&#9898;</button>
+  <button id="high-contrast" title="Enable high contrast">&#9680;</button>
+  <button id="invert-colors" title="Enable negative contrast">&#9681;</button>
+  <button id="light-background" title="Enable light background">&#9728;</button>
+  <button id="link-underline" title="Underline links">U</button>
+  <button id="readable-font" title="Enable light background">Aa</button>
+  <button id="reset" title="Reset features">&#x21bb;</button>
+            <button class="accessibility-btn">👤</button>
+</div>
+    <section id="container">
+    	<div class="wrap-container zerogrid">
+
+    {% block content %}
+
+    {% endblock %}
+        </div>
+    </section>
+{% include 'footer.html' %}
+</body>
+</html>

@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}{{sitename}}{% endblock %}
+{% block head %}
+    <style>
+        body{
+            font-family: "Segoe UI";
+            background-color: white;
+            color: black;
+            font-size: 20px;
+        }
+
+        .darktheme{
+            background-color: #19037a;
+            color: white;
+        }
+
+        #descriptions{
+            max-height: 53px;
+            width: 70%;
+            overflow: hidden;
+        }
+
+        .results{
+            display: inline-block;
+            width: 15%;
+        }
+
+        .clickable{
+            background-color: #1c87c9;
+            cursor: pointer;
+        }
+
+        .nearbyresults{
+            display: inline-block;
+            width: 50%;
+            margin-left: 4%;
+            max-height: 20px;
+            position: absolute;
+            vertical-align: top;
+        }
+
+        #searchingmovie{
+            font-family: "Segoe UI";
+        }
+
+        #buttonsubmit{
+            font-family: "Segoe UI"
+        }
+
+        #h1resultstag{
+            font-family: "Segoe UI"
+        }
+
+        p{
+            font-family: "Segoe UI"
+        }
+
+        .bigdiv{
+            width: 49%;
+            display: inline-block;
+            border-style: solid;
+            margin-bottom: 13px;
+            min-height: 200px;
+        }
+
+        #buttondetails{
+            vertical-align: bottom;
+            position: absolute;
+            margin-left: 8%;
+        }
+
+        #images{
+            max-height: 200px;
+            max-width: 160px;
+            overflow: hidden;
+        }
+
+        #disclaimer1{
+            font-size: 14px;
+        }
+
+        .themes{
+            display: inline-block;
+        }
+
+        .enlarge{
+            font-size: 28px;
+        }
+
+    </style>
+{% endblock %}
+{% block content %}
+     <div class="crumbs">
+        <ul>
+            <li><a href="{% url 'index' %}">Home</a></li>
+            <li><a href="#">Search </a></li>
+            <li><a href="#">Search Results</a></li>
+        </ul>
+    </div>
+    <form method=POST action="{% url 'searchmovies' %}">
+        {% csrf_token %}
+        <input type="search" placeholder="Search For Movies" aria-label="wordtosearch" name="wordtosearch" id="searchingmovie">
+        <button type="submit" id="buttonsubmit">Search</button>
+    </form>
+    <div class="themes">
+        <button id="darking" onclick="darktheme()">Light/Dark</button>
+        <button id="enlarge" onclick="enlarging()">a/A</button>
+    </div>
+    {% if wordtosearch %}
+        {% if length > 0 %}
+            <h1 id="h1resultstag">Results for searching movies containing "{{ wordtosearch }}":</h1>
+            <br>
+            
+            {% for movie in movies %}
+            <div class="bigdiv">
+                <div class="results">
+                    {% for photo in movie.moviephoto_set.all %}
+                        <img src="{{ photo.image.url }}" alt="Movie Photo" id="images">
+                    {% endfor %}
+                </div>
+                <div class="nearbyresults">
+                    <p>{{movie.title}}</p>
+                    <p id="descriptions">{{movie.description}}</p>
+                </div>
+                <button onclick="location.href='/moviedetails?q={{movie.title}}'" id="buttondetails">Details</button>
+            </div>    
+            {% endfor %}
+        {% else %}
+            <h1>No results found or no input received</h1>
+        {% endif %}
+    {% else %}
+        <h1>No results found or no input received</h1>
+    {% endif %}
+        <br>
+            <script>
+            function darktheme(){
+                var element= document.body;
+                element.classList.toggle("darktheme");
+            }
+
+            function enlarging(){
+                var element=document.body;
+                element.classList.toggle("enlarge");
+            }
+
+        </script>
+
+{% endblock %}

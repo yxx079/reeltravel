@@ -1,0 +1,22 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Your Website Title{% endblock %}</title>
+
+    <!-- Add your CSS and JavaScript files here -->
+    <link rel="stylesheet" href="{% static 'css/user.css' %}">
+
+
+</head>
+<body>
+<a href="{% url 'dashboard' %}" class="back-to-main">Back to dashboard</a>
+    <div class="cont">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+</body>
+</html>

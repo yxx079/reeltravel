@@ -1,0 +1,102 @@
+{% extends 'mapbase.html' %}
+{% block content %}
+    <style>
+
+        #mapAdd .leaflet-draw-edit-edit {
+            display: none;
+        }
+
+        #mapAdd .leaflet-popup-content {
+            width: 500px;
+        }
+
+        .btn {
+
+
+            font-weight: 400;
+            text-align: center;
+            vertical-align: middle;
+            cursor: pointer;
+
+            border: 1px solid transparent;
+            white-space: nowrap;
+
+            font-size: 14px;
+            line-height: 1.42857143;
+            border-radius: 4px;
+        }
+
+
+    </style>
+    <div class="crumbs">
+        <ul>
+            <li><a href="{% url 'index' %}">Home</a></li>
+            <li><a href="#">Footprint</a></li>
+        </ul>
+    </div>
+    <div id="map" class="mapAdd"></div>
+
+    <!-- Edit popup template -->
+    <script>
+        var map = L.map('map').setView([51.505, -0.09], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
+            maxZoom: 18,
+        }).addTo(map);
+
+        var drawnItems = new L.FeatureGroup().addTo(map);
+        //Adding the edit toolbar
+        var drawControl = new L.Control.Draw({
+            edit: {
+                featureGroup: drawnItems,
+            },
+            // FeatureGroup contains the layers that should be editable,he featureGroup can contain 0 or more features with geometry types Point, LineString, and Polygon.
+            draw: {
+                marker: {
+                    repeatMode: false, // Disable creating multiple markers at once
+                },
+            },
+        });
+        map.addControl(drawControl);
+
+        map.on(L.Draw.Event.CREATED, function (e) {
+  var layer = e.layer;
+  layer.bindPopup(initializeEditablePopup(layer));
+
+  drawnItems.addLayer(layer);
+});
+        function initializeEditablePopup(layer) {
+  return function () {
+    var savedText = layer.savedText || "";
+    var isTextSaved = !!layer.savedText;
+    var textareaDisabled = isTextSaved ? "disabled" : "";
+
+    var content = `
+      <textarea id="popup-textarea" style="width: 100%;" ${textareaDisabled}>${savedText}</textarea>
+      <button id="save-btn" class="button-pop">SAVE</button>
+      <button id="edit-btn" class="button-pop">EDIT</button>
+    `;
+
+    var div = document.createElement('div');
+    div.innerHTML = content;
+
+    var saveBtn = div.querySelector('#save-btn');
+    var editBtn = div.querySelector('#edit-btn');
+    var textarea = div.querySelector('#popup-textarea');
+
+    saveBtn.onclick = function () {
+      layer.savedText = textarea.value;
+      textarea.disabled = true;
+    };
+
+    editBtn.onclick = function () {
+      textarea.disabled = false;
+    };
+
+    return div;
+  };
+}
+
+    </script>
+{% endblock %}
